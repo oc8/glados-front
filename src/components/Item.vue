@@ -9,14 +9,14 @@
 		<VRow>
 			<VCol class="mt-n3 ml-2 d-flex align-center justify-center" cols="4">
 				<ILightOff
-					v-if="item.status == 'off' || item.status == 'unavailable'"
+					v-if="item.status == 'off' || item.status == 'unavailable' || percent.val.value == 0"
 					:width="100"
 					:height="100"
 					:color="$vuetify.theme.current.colors.text"
 					@click="percent.val.value = 50"
 				/>
 				<ILightOn
-					v-if="item.status == 'on'"
+					v-else-if="item.status == 'on' || percent.val.value > 0"
 					:width="100"
 					:height="100"
 					class="on"
@@ -71,6 +71,11 @@ onMounted(() => {
 			percent.val.value = 100;
 		} else if (percent.val.value < 0) {
 			percent.val.value = 0;
+		}
+		if (percent.val.value == 0) {
+			props.item.status = 'off';
+		} else {
+			props.item.status = 'on';
 		}
 		isNbr.value = true;
 	} else {

@@ -23,9 +23,9 @@ export const useAppStore = defineStore('app', {
 			const rs = await http.get('/entities?room_id=' + this.currentRoom.id);
 			// sort by creation date
 			rs.data.sort((a: IItem, b: IItem) => {
-				if (a.created_at < b.created_at) {
+				if (a.created_at > b.created_at) {
 					return 1;
-				} else if (a.created_at > b.created_at) {
+				} else if (a.created_at < b.created_at) {
 					return -1;
 				}
 				return 0;
