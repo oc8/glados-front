@@ -1,7 +1,7 @@
 <template>
 	<VCard
 		:height="150"
-		:min-width="250"
+		:min-width="300"
 		class="d-flex align-center justify-center rounded-lg elevation-0 px-6"
 		:color="$vuetify.theme.current.colors.trinary"
 		:disabled="item.status == 'unavailable'"
