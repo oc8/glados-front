@@ -2,10 +2,10 @@
 import { defineStore } from 'pinia'
 import http from '@/plugins/axios'
 import { IRoom, IItem } from '@/types'
-import { compileScript } from 'vue/compiler-sfc';
+import sortEntity from '@/utils/sort_entity';
 
 let timerId: ReturnType<typeof setTimeout>;
-const delay = 1000;
+const delay = 100;
 
 export const useAppStore = defineStore('app', {
   state: () => ({
@@ -14,6 +14,7 @@ export const useAppStore = defineStore('app', {
 		rooms: [] as IRoom[],
   }),
 	actions: {
+		// api
 		async getRooms(): Promise<void> {
 			this.rooms = (await http.get('/rooms')).data;
 			this.currentRoom = this.rooms[0];
@@ -21,32 +22,20 @@ export const useAppStore = defineStore('app', {
 		},
 		async getCurrentItems(): Promise<void> {
 			const rs = await http.get('/entities?room_id=' + this.currentRoom.id);
-			// sort by creation date
-			rs.data.sort((a: IItem, b: IItem) => {
-				if (a.created_at > b.created_at) {
-					return 1;
-				} else if (a.created_at < b.created_at) {
-					return -1;
-				}
-				return 0;
-			});
-			this.currentItems = rs.data;
-			console.log(this.currentItems);
+			this.currentItems = sortEntity(rs.data);
 		},
 		async postItem() {
-			const rs = await http.post('/entities', {
+			await http.post('/entities', {
 				name: 'New light ' + Math.floor(Math.random() * 100),
 				type: 'light',
 				status: 'off',
 				value: '0',
 				room_id: this.currentRoom.id,
 			});
-			console.log(rs);
 			this.getCurrentItems();
 		},
 		async deleteItem(item: IItem) {
 			const rs = await http.delete('/entities/' + item.id);
-			console.log(rs);
 			this.getCurrentItems();
 		},
 		async patchItem(item: IItem) {
@@ -56,10 +45,10 @@ export const useAppStore = defineStore('app', {
 					status: item.status,
 					value: item.value
 				});
-				console.log(rs);
 				this.getCurrentItems();
 			}, delay);
 		},
+		// room navigation
 		prevRoom() {
 			const idx = this.rooms.findIndex((r) => r.id === this.currentRoom.id);
 			if (idx > 0) {

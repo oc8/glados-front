@@ -29,7 +29,7 @@
 				</VBtn>
 			</VCol>
 		</VRow>
-		<VRow>
+		<VRow v-if="app.currentItems.length != 0">
 			<VCol v-for="item in app.currentItems">
 				<Item :item="item" />
 			</VCol>
@@ -44,9 +44,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue";
 import Item from "@/components/Item.vue";
-import { IItem } from '@/types';
 import LoaderItem from "@/components/LoaderItem.vue";
 import { useAppStore } from '@/store/app';
 

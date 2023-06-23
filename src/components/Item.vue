@@ -2,32 +2,53 @@
 	<VCard
 		:height="150"
 		:min-width="250"
-		class="pointer d-flex align-center justify-center rounded-lg elevation-0"
+		class="d-flex align-center justify-center rounded-lg elevation-0 px-6"
 		:color="$vuetify.theme.current.colors.trinary"
 		:disabled="item.status == 'unavailable'"
 	>
 		<VRow>
-			<VCol class="mt-n3 ml-2 d-flex align-center justify-center" cols="4">
+			<VCol
+				v-if="item.type == 'light'"
+				class="mt-n3 ml-n2 d-flex align-center justify-center"
+				cols="4"
+			>
 				<ILightOff
-					v-if="item.status == 'off' || item.status == 'unavailable' || percent.val.value == 0"
+					v-if="percent.val.value == 0"
 					:width="100"
 					:height="100"
+					class="pointer"
 					:color="$vuetify.theme.current.colors.text"
 					@click="percent.val.value = 50"
 				/>
 				<ILightOn
-					v-else-if="item.status == 'on' || percent.val.value > 0"
+					v-else-if="percent.val.value > 0"
 					:width="100"
 					:height="100"
-					class="on"
+					class="on pointer"
 					:color="$vuetify.theme.current.colors.primary"
 					@click="percent.val.value = 0"
 				/>
 			</VCol>
-			<VCol class="pr-10">
-				<h3>
-					{{ item.name }}
-				</h3>
+			<VCol class="pr-4">
+				<div class="d-flex justify-space-between">
+					<h3>
+						{{ item.name }}
+					</h3>
+					<div>
+						<VBtn
+							flat
+							density="compact"
+							icon="mdi-volume-high"
+							@click="speak(item.name + item.status)"
+						/>
+						<VBtn
+							flat
+							density="compact"
+							icon="mdi-close"
+							@click="app.deleteItem(item)"
+						/>
+					</div>
+				</div>
 				<h5>
 					{{ item.type }}
 				</h5>
@@ -50,6 +71,7 @@ import ILightOn from "@/assets/icons/ILightOn.vue";
 import Slide from "@/components/Slide.vue";
 import { IItem } from '@/types';
 import { useAppStore } from '@/store/app';
+import { onUpdated } from 'vue';
 
 const app = useAppStore();
 
@@ -62,9 +84,7 @@ const props = defineProps({
 		required: true
 	}
 });
-
-onMounted(() => {
-	console.log(props.item.value);
+function init() {
 	if (Number.isInteger(Number(props.item.value))) {
 		percent.val.value = Number(props.item.value);
 		if (percent.val.value > 100) {
@@ -72,16 +92,13 @@ onMounted(() => {
 		} else if (percent.val.value < 0) {
 			percent.val.value = 0;
 		}
-		if (percent.val.value == 0) {
-			props.item.status = 'off';
-		} else {
-			props.item.status = 'on';
-		}
 		isNbr.value = true;
 	} else {
 		isNbr.value = false;
 	}
-});
+}
+onMounted(init);
+onUpdated(init);
 
 watch(percent.val, (newVal, oldVal) => {
 	if (isNbr.value) {
@@ -94,6 +111,24 @@ watch(percent.val, (newVal, oldVal) => {
 	}
 	app.patchItem(props.item);
 });
+
+let synth = window.speechSynthesis;
+let utterance = new SpeechSynthesisUtterance();
+
+function speak(text: string) {
+	if (synth.speaking) {
+		synth.cancel();
+	}
+
+	return new Promise((resolve, reject) => {
+		if (!text)
+			text = '';
+		utterance.text = text;
+		synth.speak(utterance);
+		utterance.onend = resolve;
+		utterance.onerror = reject;
+	});
+}
 </script>
 
 <style scoped>
