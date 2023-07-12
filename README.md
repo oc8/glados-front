@@ -1,4 +1,4 @@
-# glados-front
+# Glados frontend
 
 This is a one-day technical test.<br>
 Glados is a web interface that lets you manage your home automation.
