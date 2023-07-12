@@ -24,7 +24,6 @@ let isHover = ref(false);
 
 function toggleTheme() {
 	theme.global.name.value = theme.global.name.value === 'light' ? 'dark' : 'light';
-	console.log(theme.global.current.value);
 }
 
 const tabs = [

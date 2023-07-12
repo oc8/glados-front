@@ -13,8 +13,6 @@ import { useTheme } from 'vuetify/lib/framework.mjs';
 import vuetify from '@/plugins/vuetify';
 
 const theme = useTheme();
-console.log(theme.current.value);
-console.log(vuetify.theme.current.value);
 </script>
 
 <style scoped>
