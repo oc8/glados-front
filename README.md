@@ -1,6 +1,8 @@
 # glados-front
 
-Glados is a web interface that lets you manage your home automation
+This is a one-day technical test.<br>
+Glados is a web interface that lets you manage your home automation.
+
 
 ## Retrieve environment variables
 In order to access the environment variables, it is essential to have them in a `.env` file. You can change them whenever you want.
